@@ -1,9 +1,4 @@
----
-title: "PA1_template"
-output: 
-  html_document: 
-    keep_md: yes
----
+# PA1_template
 
 ## Assignment Course Project 1 - Reproducible Research
 
@@ -35,12 +30,9 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 
 ### Program
 
-```{r Global options, include=FALSE}
-library("knitr")
-knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
-                       warning=FALSE, message=FALSE)
-```
-```{r Loadig data, echo=TRUE, results='hide'}
+
+
+```r
 ## Check that directory for download exists
 if(!file.exists("data")) { dir.create("data") }
 
@@ -58,8 +50,8 @@ unzip("./data/activity_data.zip", exdir = "./data")
 activity <- read.table ("./data/activity.csv", sep = ",", header = TRUE)
 ```
 
-```{r Mean total number of steps taken per day}
 
+```r
 library("plyr")
 
 ## Calculate total number of steps taken each day
@@ -68,13 +60,13 @@ rawsum <- ddply (activity, "date", function(x)
         asum <- sum(x$steps)
         data.frame(tsteps=asum)
         })
-
 ```
 
 ### What is the mean total number of steps taken per day?
 #### 1- Make a histogram of the total number of steps each day
 
-```{r 01_Steps from raw data, echo=TRUE} 
+
+```r
 library ("ggplot2")
 nbins = length(rawsum$date)
 ggplot(data = rawsum, aes(rawsum$tsteps)) + 
@@ -87,12 +79,80 @@ ggplot(data = rawsum, aes(rawsum$tsteps)) +
         labs (title= 'Total Number of Steps Taken Each Day (Raw Data)')
 ```
 
+![](Figs/01_Steps from raw data-1.png)<!-- -->
+
 
 #### 2- Calculate and report the mean and median total number of steps taken per day
-```{r Mean and median total number of steps}
+
+```r
 (rawmeanmedian <- ddply(activity, ~date, summarise,
                         steps_mean = mean(steps, na.rm = TRUE),
                         steps_median = median(steps, na.rm = TRUE)))
+```
+
+```
+##          date steps_mean steps_median
+## 1  2012-10-01        NaN           NA
+## 2  2012-10-02  0.4375000            0
+## 3  2012-10-03 39.4166667            0
+## 4  2012-10-04 42.0694444            0
+## 5  2012-10-05 46.1597222            0
+## 6  2012-10-06 53.5416667            0
+## 7  2012-10-07 38.2465278            0
+## 8  2012-10-08        NaN           NA
+## 9  2012-10-09 44.4826389            0
+## 10 2012-10-10 34.3750000            0
+## 11 2012-10-11 35.7777778            0
+## 12 2012-10-12 60.3541667            0
+## 13 2012-10-13 43.1458333            0
+## 14 2012-10-14 52.4236111            0
+## 15 2012-10-15 35.2048611            0
+## 16 2012-10-16 52.3750000            0
+## 17 2012-10-17 46.7083333            0
+## 18 2012-10-18 34.9166667            0
+## 19 2012-10-19 41.0729167            0
+## 20 2012-10-20 36.0937500            0
+## 21 2012-10-21 30.6284722            0
+## 22 2012-10-22 46.7361111            0
+## 23 2012-10-23 30.9652778            0
+## 24 2012-10-24 29.0104167            0
+## 25 2012-10-25  8.6527778            0
+## 26 2012-10-26 23.5347222            0
+## 27 2012-10-27 35.1354167            0
+## 28 2012-10-28 39.7847222            0
+## 29 2012-10-29 17.4236111            0
+## 30 2012-10-30 34.0937500            0
+## 31 2012-10-31 53.5208333            0
+## 32 2012-11-01        NaN           NA
+## 33 2012-11-02 36.8055556            0
+## 34 2012-11-03 36.7048611            0
+## 35 2012-11-04        NaN           NA
+## 36 2012-11-05 36.2465278            0
+## 37 2012-11-06 28.9375000            0
+## 38 2012-11-07 44.7326389            0
+## 39 2012-11-08 11.1770833            0
+## 40 2012-11-09        NaN           NA
+## 41 2012-11-10        NaN           NA
+## 42 2012-11-11 43.7777778            0
+## 43 2012-11-12 37.3784722            0
+## 44 2012-11-13 25.4722222            0
+## 45 2012-11-14        NaN           NA
+## 46 2012-11-15  0.1423611            0
+## 47 2012-11-16 18.8923611            0
+## 48 2012-11-17 49.7881944            0
+## 49 2012-11-18 52.4652778            0
+## 50 2012-11-19 30.6979167            0
+## 51 2012-11-20 15.5277778            0
+## 52 2012-11-21 44.3993056            0
+## 53 2012-11-22 70.9270833            0
+## 54 2012-11-23 73.5902778            0
+## 55 2012-11-24 50.2708333            0
+## 56 2012-11-25 41.0902778            0
+## 57 2012-11-26 38.7569444            0
+## 58 2012-11-27 47.3819444            0
+## 59 2012-11-28 35.3576389            0
+## 60 2012-11-29 24.4687500            0
+## 61 2012-11-30        NaN           NA
 ```
 
 
@@ -100,35 +160,48 @@ ggplot(data = rawsum, aes(rawsum$tsteps)) +
 
 #### 1- Make a time series plot (.i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps
 #### taken averaged across all days (y-axis)
-```{r time series plot}
+
+```r
 rawaver <- ddply(activity, ~interval, summarise,
                         meansteps = mean(steps, na.rm = TRUE))
 ```
-```{r 02_Average daily activity patterns, echo=TRUE}
+
+```r
 plot(rawaver[,1], rawaver[,2], type = "l", col = "blue", lwd = 3, xlab = "Interval (5-minute)", ylab = "Average number of steps", 
      xaxt = "n", 
      main = "Average Daily Activty")
      axis(side=1, at = seq(0, 2500, 500))
 ```
 
+![](Figs/02_Average daily activity patterns-1.png)<!-- -->
+
 #### 2- Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-```{r , Maximum number of steps, echo=TRUE}
+
+```r
 IndexMax <- which.max(rawaver[,2])
 Interval_MaxNumSteps <- rawaver[IndexMax,1]
 AveMaxNumSteps <- rawaver[IndexMax,2]
 ```
-The 5-minute-interval `r Interval_MaxNumSteps` contains the maximum number of steps:`r AveMaxNumSteps`
+The 5-minute-interval 835 contains the maximum number of steps:206.1698113
 
 ### Imputing missing values
 #### 1- Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NA's)
-```{r NAs pattern1 }
+
+```r
 ## Review pattern of NA's in dataset 
 library ("mice")
 md.pattern(activity)
 ```
 
-```{r 03_NAs pattern2, echo=TRUE}
+```
+##       date interval steps     
+## 15264    1        1     1    0
+##  2304    1        1     0    1
+##          0        0  2304 2304
+```
 
+
+```r
 library ("VIM")
 ## Plot missing data and pattern of missing data in file
 ## the "x-axis" represent the columns in the file
@@ -141,12 +214,24 @@ mice_plot <- aggr(activity, col=c("green", "red"),
                   ylab = c("MIssing Data", "Pattern"))
 ```
 
-```{r Total number of NAs}
+![](Figs/03_NAs pattern2-1.png)<!-- -->
+
+```
+## 
+##  Variables sorted by number of missings: 
+##  Variable     Count
+##     steps 0.1311475
+##      date 0.0000000
+##  interval 0.0000000
+```
+
+
+```r
 ## Calculate total number of missing values
 tna <- sum( is.na(activity$steps) )
 ```
 
-Total number of missing values: `r tna`
+Total number of missing values: 2304
 
 #### 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be 
 ####    sophisticated.For example you coud use the mean/median for that day, or the mean for that 5-minute interval, etc.
@@ -155,7 +240,8 @@ Total number of missing values: `r tna`
 
 #### 3- Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
-```{r Impute missing values}
+
+```r
 library (Hmisc)
 activity2 <- activity
 activity2$steps <- with(activity2, impute(steps, mean))
@@ -165,8 +251,8 @@ activity2$steps <- with(activity2, impute(steps, mean))
 #### Do these values differ from the estimates from the first part of the assignment?
 #### What is the impact of imputig missing data on the estimates of the total daily number of steps?
 
-```{r 04_Plot total number of steps, echo=TRUE}
 
+```r
 library("ggplot2")
 library("gridExtra")
 
@@ -199,14 +285,81 @@ hproc <- ggplot(data = procsum, aes(procsum$tsteps)) +
         ggtitle ('Total Number of Steps Taken Each Day (Processed Data)')
 
 grid.arrange(hraw, hproc, nrow = 2)
-
 ```
 
-```{r Mean and median of processed data }
+![](Figs/04_Plot total number of steps-1.png)<!-- -->
+
+
+```r
 ## Mean and median total number of steps
 (procmeanmedian <- ddply(activity2, ~date, summarise,
                         steps_mean = mean(steps, na.rm = TRUE),
                         steps_median = median(steps, na.rm = TRUE)))
+```
+
+```
+##          date steps_mean steps_median
+## 1  2012-10-01 37.3825996      37.3826
+## 2  2012-10-02  0.4375000       0.0000
+## 3  2012-10-03 39.4166667       0.0000
+## 4  2012-10-04 42.0694444       0.0000
+## 5  2012-10-05 46.1597222       0.0000
+## 6  2012-10-06 53.5416667       0.0000
+## 7  2012-10-07 38.2465278       0.0000
+## 8  2012-10-08 37.3825996      37.3826
+## 9  2012-10-09 44.4826389       0.0000
+## 10 2012-10-10 34.3750000       0.0000
+## 11 2012-10-11 35.7777778       0.0000
+## 12 2012-10-12 60.3541667       0.0000
+## 13 2012-10-13 43.1458333       0.0000
+## 14 2012-10-14 52.4236111       0.0000
+## 15 2012-10-15 35.2048611       0.0000
+## 16 2012-10-16 52.3750000       0.0000
+## 17 2012-10-17 46.7083333       0.0000
+## 18 2012-10-18 34.9166667       0.0000
+## 19 2012-10-19 41.0729167       0.0000
+## 20 2012-10-20 36.0937500       0.0000
+## 21 2012-10-21 30.6284722       0.0000
+## 22 2012-10-22 46.7361111       0.0000
+## 23 2012-10-23 30.9652778       0.0000
+## 24 2012-10-24 29.0104167       0.0000
+## 25 2012-10-25  8.6527778       0.0000
+## 26 2012-10-26 23.5347222       0.0000
+## 27 2012-10-27 35.1354167       0.0000
+## 28 2012-10-28 39.7847222       0.0000
+## 29 2012-10-29 17.4236111       0.0000
+## 30 2012-10-30 34.0937500       0.0000
+## 31 2012-10-31 53.5208333       0.0000
+## 32 2012-11-01 37.3825996      37.3826
+## 33 2012-11-02 36.8055556       0.0000
+## 34 2012-11-03 36.7048611       0.0000
+## 35 2012-11-04 37.3825996      37.3826
+## 36 2012-11-05 36.2465278       0.0000
+## 37 2012-11-06 28.9375000       0.0000
+## 38 2012-11-07 44.7326389       0.0000
+## 39 2012-11-08 11.1770833       0.0000
+## 40 2012-11-09 37.3825996      37.3826
+## 41 2012-11-10 37.3825996      37.3826
+## 42 2012-11-11 43.7777778       0.0000
+## 43 2012-11-12 37.3784722       0.0000
+## 44 2012-11-13 25.4722222       0.0000
+## 45 2012-11-14 37.3825996      37.3826
+## 46 2012-11-15  0.1423611       0.0000
+## 47 2012-11-16 18.8923611       0.0000
+## 48 2012-11-17 49.7881944       0.0000
+## 49 2012-11-18 52.4652778       0.0000
+## 50 2012-11-19 30.6979167       0.0000
+## 51 2012-11-20 15.5277778       0.0000
+## 52 2012-11-21 44.3993056       0.0000
+## 53 2012-11-22 70.9270833       0.0000
+## 54 2012-11-23 73.5902778       0.0000
+## 55 2012-11-24 50.2708333       0.0000
+## 56 2012-11-25 41.0902778       0.0000
+## 57 2012-11-26 38.7569444       0.0000
+## 58 2012-11-27 47.3819444       0.0000
+## 59 2012-11-28 35.3576389       0.0000
+## 60 2012-11-29 24.4687500       0.0000
+## 61 2012-11-30 37.3825996      37.3826
 ```
 
 ### Are there differences in activity patterns between weekdays and weekends?
@@ -214,7 +367,8 @@ grid.arrange(hraw, hproc, nrow = 2)
 
 #### 1- Create a new factor variable in the dataset with two levels "weekday" and "weekend" indicating whether a given date is a weekday or weekend day
 
-```{r Processing weekdays and weekends}
+
+```r
 ## Create a column with the day obtained from the column "date"
 activity2$day <- weekdays(as.Date(activity2$date))
 
@@ -229,7 +383,8 @@ activity2$dayofweek <- factor((activity2$day %in% weekends),
 #### 2- Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the 
 ####    average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
 
-```{r 05_Activity Patterns in Weekdays and Weekends, echo=TRUE}
+
+```r
 procaver <- ddply(activity2, dayofweek~interval, summarise,
                   meansteps = mean(steps, na.rm = TRUE))
 
@@ -240,3 +395,5 @@ xyplot(meansteps ~ interval | dayofweek , data = procaver, layout = c(1,2),
        ylab = "Number of steps (average)",
        main = "Activity Patterns in Weekends and Weekdays")
 ```
+
+![](Figs/05_Activity Patterns in Weekdays and Weekends-1.png)<!-- -->
